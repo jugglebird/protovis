@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Win/Loss (was Directed Arc)</title>
+    <script type="text/javascript" src="../../protovis.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript+protovis">
+
+var data = [0, 1, 2, 3];
+var links = [{source:0, target:1, extra:"foo"}, {source:3, target:2, extra:"foo"}, {source:1, target:2, extra:"foo"}, {source:2, target:3, extra: "bar"}];
+var vis = new pv.Panel()
+    .width(400)
+    .height(400)
+    .top(100)
+    .left(100)
+    .right(100)
+    .bottom(100);
+
+var layout = vis.add(pv.Panel)
+    .data(["left"])
+  .add(pv.Layout.Arc)
+    .nodes(data)
+    .links(links)
+    // .title(function(d) {
+    //   console.log(d);
+    // })
+    .directed(true)
+    .orient(pv.identity);
+
+layout.link
+  .eccentricity(function(d) { return 0.75; })
+  .strokeStyle(function(d) {
+    // debugger;
+    if (d.index == 0) {
+      // console.log(d);
+      // console.log(links[d.index]);
+    }
+    return (d.linkDegree === 1) ? "red" : "green";
+  })
+
+
+layout.link.add(pv.Line)
+  .text(function(n) {
+    console.log(n);
+    return "NODE";
+  });
+layout.node.add(pv.Dot);
+layout.label.add(pv.Label);
+// layout.label.add(pv.Label)
+//   .anchor("center")
+
+vis.render();
+
+    </script>
+  </body>
+</html>

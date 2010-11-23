@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>Win-Loss</title>
+    <script type="text/javascript" src="../../protovis.js"></script>
+    <script type="text/javascript" src="../winloss.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript+protovis">
+/*
+TODO:
+  - Scale Dots
+  - Color lines by loss/gain
+  - Offset lines by loss/gain
+  - Arrows
+  - Logos
+*/
+
+
+/* Compute random positions for the nodes. */
+companies.nodes.forEach(function(n) {
+  n.x = Math.random();
+  n.y = Math.random();
+});
+
+var w = 600,
+    h = 600,
+    x = pv.Scale.linear().range(0, w),
+    y = pv.Scale.linear().range(0, h);
+
+var vis = new pv.Panel()
+  .width(w)
+  .height(h)
+  .margin(10)
+  .strokeStyle("#ccc");
+
+var layout = vis.add(pv.Layout.Network)
+  .nodes(companies.nodes)
+  .links(companies.links);
+
+/* Override the node prototype's properties */
+layout.node
+  .size(function(d) { return d.count * 10; })
+  .left(function(d) { return x(d.x); })
+  .top(function(d) { return y(d.y); })
+  // .add(pv.Dot)
+  //   .shape("triangle")
+  //   .strokeStyle("black")
+  //   .fillStyle("black");
+
+
+layout.link
+  // .top(function(d) { return y(d.y - 5); })
+  .lineWidth(function(d) {
+    // console.log(d);
+    return 5;
+  })
+  .strokeStyle(function(d) {
+    // console.log(d);
+    return "red";
+  })
+  .add(pv.Line)
+    // .top(function(d) { return y(d.y + 5); })
+    .strokeStyle("green")
+    .lineWidth(10);
+
+
+layout.label
+  .add(pv.Label)
+    // .anchor("center")
+    // .textAlign("center")
+    // .textStyle("blue")
+    .text(function(d) {
+      // console.log(d);
+      return d.nodeName
+    });
+
+
+
+// Add nodes and lines to chart
+layout.link.add(pv.Line);
+layout.node.add(pv.Dot);
+
+vis.render();
+
+    </script>
+  </body>
+</html>
