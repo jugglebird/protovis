@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <title>Social Rollup</title>
+    <script type="text/javascript" src="../../protovis.js"></script>
+    <script type="text/javascript" src="../winloss.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript+protovis">
+
+var w = 400,
+    h = 100,
+    fx = function(d) d.outcome,
+    fy = function(d) d.group,
+    x = pv.Scale.ordinal(winloss.nodes, fx).splitFlush(0, w),
+    y = pv.Scale.ordinal(winloss.nodes, fy).splitFlush(0, h);
+
+function showArrow(node, link) {
+  // debugger;
+  // console.log(node, link);
+  var status = link.links[0].status;
+  if (status == "win" && link.targetNode.nodes[0].outcome == "Winner") {
+    console.log(link.targetNode.nodes[0].name + " was the winner");
+    // console.log(link.links[0].status);
+    // console.log(link.sourceNode);
+    // console.log(link.targetNode);
+    // return link.links.status;
+    return true;
+  } else if (status == "loss" && link.sourceNode.nodes[0].outcome == "Loser") {
+    console.log(link.sourceNode.nodes[0].name + " was the loser");
+  } else {
+    console.log("duplicate arrow");
+    return false;
+  }
+}
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .top(100)
+    .margin(30);
+
+var layout = vis.add(pv.Layout.Rollup)
+    .nodes(winloss.nodes)
+    .links(winloss.links)
+    .x(x.by(fx))
+    .y(y.by(fy))
+    .directed(true);
+
+layout.link.add(pv.Line);
+
+layout.node.add(pv.Dot)
+  .size(750)
+  .anchor("center")
+  .add(pv.Label)
+    .text(function(node) {
+      return node.name;
+    });
+
+vis.add(pv.Label)
+  .data(x.domain())
+  .left(x)
+  .top(-50)
+  .textAlign("center")
+  .textBaseline("bottom");
+
+layout.link
+  .strokeStyle(function(d, e) {
+    // console.log(d, e);
+    return (e.links[0].status === "loss") ? "red" : "green";
+  })
+  .add(pv.Dot)
+    .size(6)
+    .shape("triangle")
+    // .strokeStyle("black")
+    .strokeStyle(function(d, e) {
+      // console.log(d, e);
+      return (e.links[0].status === "loss") ? "red" : "green";
+    })
+    .fillStyle("white")
+    .visible(showArrow)
+    // .left(function(node, link) {
+    //   var s = link.sourceNode;
+    //   var t = link.targetNode;
+    //   // console.log(node, link);
+    //   return s.x - t.x;
+    // })
+    // .bottom(function(node, link) {
+    //   var s = link.sourceNode;
+    //   var t = link.targetNode;
+    //   // console.log(node, link);
+    //   return t.y - s.y;
+    // });
+
+
+
+// vis.add(pv.Label)
+//     .data(y.domain())
+//     .top(y)
+//     .left(-10)
+//     .textAlign("right")
+//     .textBaseline("middle");
+
+vis.render();
+
+    </script>
+  </body>
+</html>

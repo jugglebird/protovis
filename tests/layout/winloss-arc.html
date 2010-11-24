@@ -2,17 +2,18 @@
   <head>
     <title>Win/Loss (was Directed Arc)</title>
     <script type="text/javascript" src="../../protovis.js"></script>
+    <script type="text/javascript" src="../winloss.js"></script>
   </head>
   <body>
     <script type="text/javascript+protovis">
 
-var data = [0, 1, 2, 3, 4, 5];
-var links = [
-  {source:0, target:1, status:"win", count: 5},
-  {source:3, target:2, status:"win", count: 5},
-  {source:1, target:2, status:"win", count: 5},
-  {source:2, target:3, status: "loss", count: 5}
-];
+// var data = [0, 1, 2, 3, 4, 5];
+// var links = [
+//   {source:0, target:1, status:"win", count: 15},
+//   {source:0, target:2, status:"win", count: 25},
+//   {source:0, target:3, status:"win", count: 35},
+//   {source:0, target:3, status: "loss", count: 45}
+// ];
 var vis = new pv.Panel()
     .width(400)
     .height(400)
@@ -23,44 +24,45 @@ var vis = new pv.Panel()
 
 var layout = vis.add(pv.Panel)
     .data(["left"])
-  .add(pv.Layout.Arc)
-    .nodes(data)
-    .links(links)
-    // .title(function(d) {
-    //   console.log(d);
-    // })
+    .add(pv.Layout.Arc)
+    .nodes(winloss.nodes)
+    .links(winloss.links)
     .directed(true)
     .orient(pv.identity);
 
 layout.node
-  .size(150);
+  .size(500);
 
 layout.link
   .eccentricity(0.75)
   .strokeStyle(function(d, e) {
     return (e.status === "loss") ? "red" : "green";
   })
-  .add(pv.Label)
-  // .top(function(d, e) {
-  //   // console.log(d, e);
-  //   // console.log(layout.link);
+  // .add(pv.Label)
+  // .left(5)
+  // .bottom(function(d, e) {
+  //   // console.log(d,e);
+  //   // return e.targetNode.y - e.sourceNode.y;
+  //   return 100;
   // })
-  .left(5)
-  .text(function(d, e) {
-    return "count " + e.count
-    // return links[d.index].count
-  });
-  
+  // .strokeStyle(function(d, e) {
+  //   return (e.status === "loss") ? "red" : "green";
+  // })
+  // .text(function(d, e) {
+  //   console.log("label for node", d);
+  //   return "count " + e.count
+  //   // return links[d.index].count
+  // });
 
 
-layout.link.add(pv.Line).anchor("center").add(pv.Label).text(function(d, e) {
-    return e.count
-    // return links[d.index].count
-  });
-layout.node.add(pv.Dot);
-layout.label.add(pv.Label);
-// layout.label.add(pv.Label)
-//   .anchor("center")
+layout.link.add(pv.Line);
+
+layout.node.add(pv.Dot)
+  .anchor("center")
+  .add(pv.Label)
+    .text(function(node) {
+      return node.name;
+    });
 
 vis.render();
 

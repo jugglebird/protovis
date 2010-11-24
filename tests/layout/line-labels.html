@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Label on a line</title>
+    <script type="text/javascript" src="../../protovis.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript+protovis">
+
+var data = [0, 1, 2, 3, 4, 5];
+
+var vis = new pv.Panel()
+    .width(400)
+    .height(400);
+    
+vis.add(pv.Line)
+  .data(0, 1);
+
+vis.render();
+
+    </script>
+  </body>
+</html>
