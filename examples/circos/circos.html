@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <title>Cars</title>
+    <link type="text/css" rel="stylesheet" href="../ex.css"/>
+    <script type="text/javascript" src="../../protovis.js"></script>
+    <script type="text/javascript" src="circos.js"></script>
+    <style type="text/css">
+
+#fig {
+  width: 880px;
+  height: 460px;
+}
+
+#title {
+  position: absolute;
+  top: 70px;
+  left: 200px;
+  padding: 10px;
+  background: white;
+}
+
+large {
+  font-size: medium;
+}
+
+    </style>
+  </head>
+  <body><div id="center"><div id="fig">
+    <script type="text/javascript+protovis">
+
+/* The dimensions to visualize, in order. */
+var w = document.body.clientWidth,
+    h = document.body.clientHeight,
+    r = 150,
+    centerX = h / 2,
+    centerY = w / 2;
+function getLineData(index, target) {
+    return [
+    {
+        x: (w / 2 + r * Math.sin(Math.PI * 2 * index / data.length)),
+        y: (h / 2 + r * Math.cos(Math.PI * 2 * index / data.length))
+    },
+    {
+        x: w / 2,
+        y: h / 2
+    },
+    {
+        x: (w / 2 + r * Math.sin(Math.PI * 2 * target / data.length)),
+        y: (h / 2 + r * Math.cos(Math.PI * 2 * target / data.length))
+    }
+    ]
+}
+function generateLineData() {
+    var lineData = new Array()
+    for (i = 0; i < data.length; i++) {
+        lineData[i] = getLineData(i, data[i].target)
+    }
+    return lineData
+}
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+     vis.add(pv.Dot)
+        .data(data)
+        .bottom(function(d) centerX + r * Math.cos(Math.PI * 2 * this.index / data.length))
+        .left(function() centerY + r * Math.sin(Math.PI * 2 * this.index / data.length))
+    .anchor("right")
+    .add(pv.Label)
+        .text(function(d) d.name)
+        .bottom(function() centerX + r * Math.cos(Math.PI * 2 * this.index / data.length))
+        .left(function() centerY + r * Math.sin(Math.PI * 2 * this.index / data.length))
+    // .textAngle(function() - 0.5 * Math.PI + 2 * Math.PI * this.index / data.length);
+    vis.add(pv.Panel)
+    .data(function() generateLineData())
+    .add(pv.Line)
+    .data(function(array) array)
+    .bottom(function(d) d.y)
+    .left(function(d) d.x)
+    .interpolate("basis")
+     vis.render();
+    </script>
+  </div></div></body>
+</html>

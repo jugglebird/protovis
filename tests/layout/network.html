@@ -35,6 +35,8 @@ layout.node
 
 layout.link.add(pv.Line);
 layout.node.add(pv.Dot);
+layout.node.add(pv.Label)
+    .text(function(d) d.nodeName)
 
 vis.render();
 

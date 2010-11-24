@@ -1,0 +1,50 @@
+<html> 
+  <head> 
+    <title>Miserables Random</title> 
+    <script type="text/javascript" src="../../protovis.js"></script> 
+    <script type="text/javascript" src="miserables.js"></script> 
+            <style type="text/css"> 
+body { 
+  margin: 0; 
+} 
+
+    </style> 
+  </head> 
+  <body> 
+    <script type="text/javascript+protovis"> 
+/* Compute random positions for the nodes. */ 
+miserables.nodes.forEach(function(n) { 
+  n.x = Math.random(); 
+  n.y = Math.random(); 
+}); 
+
+var w = 900, 
+    h = 900, 
+    x = pv.Scale.linear().range(5, w), 
+    y = pv.Scale.linear().range(6, h); 
+        colors = pv.Colors.category19(); 
+var vis = new pv.Panel() 
+    .width(w) 
+    .height(h) 
+    .fillStyle("white") 
+    .event("mousedown", pv.Behavior.pan()) 
+var layout = vis.add(pv.Layout.Network) 
+    .nodes(miserables.nodes) 
+    .links(miserables.links); 
+/* Override the node prototype's position. */ 
+layout.node 
+    .left(function(d) x(d.x)) 
+    .top(function(d) y(d.y)) 
+layout.link.add(pv.Line); 
+layout.node.add(pv.Dot) 
+    .cursor("move") 
+        .lineWidth(1) 
+    .event("mousedown", pv.Behavior.drag()) 
+        .event("drag", layout) 
+vis.render(); 
+    </script> 
+          <div id="out"> 
+    Drag events 
+  </div> 
+  </body> 
+</html> 
