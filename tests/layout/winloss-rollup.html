@@ -19,16 +19,16 @@ function showArrow(node, link) {
   // console.log(node, link);
   var status = link.links[0].status;
   if (status == "win" && link.targetNode.nodes[0].outcome == "Winner") {
-    console.log(link.targetNode.nodes[0].name + " was the winner");
+    // console.log(link.targetNode.nodes[0].name + " was the winner");
     // console.log(link.links[0].status);
     // console.log(link.sourceNode);
     // console.log(link.targetNode);
     // return link.links.status;
     return true;
   } else if (status == "loss" && link.sourceNode.nodes[0].outcome == "Loser") {
-    console.log(link.sourceNode.nodes[0].name + " was the loser");
+    // console.log(link.sourceNode.nodes[0].name + " was the loser");
   } else {
-    console.log("duplicate arrow");
+    // console.log("duplicate arrow");
     return false;
   }
 }
@@ -39,6 +39,7 @@ var vis = new pv.Panel()
     .top(100)
     .margin(30);
 
+// Overall graph layout
 var layout = vis.add(pv.Layout.Rollup)
     .nodes(winloss.nodes)
     .links(winloss.links)
@@ -46,8 +47,11 @@ var layout = vis.add(pv.Layout.Rollup)
     .y(y.by(fy))
     .directed(true);
 
+// Display a line for links
 layout.link.add(pv.Line);
 
+// Style the nodes and use company name
+// for text
 layout.node.add(pv.Dot)
   .size(750)
   .anchor("center")
@@ -56,28 +60,63 @@ layout.node.add(pv.Dot)
       return node.name;
     });
 
-vis.add(pv.Label)
-  .data(x.domain())
-  .left(x)
-  .top(-50)
-  .textAlign("center")
-  .textBaseline("bottom");
+// vis.add(pv.Label)
+//   .data(x.domain())
+//   .left(x)
+//   .top(-50)
+//   .textAlign("center")
+//   .textBaseline("bottom");
+
+// Style the links
+var alink = layout.link;
 
 layout.link
+  .eccentricity(1)
   .strokeStyle(function(d, e) {
     // console.log(d, e);
     return (e.links[0].status === "loss") ? "red" : "green";
   })
+  .top(function(d,e) {
+    var delta = (e.links[0].status === "loss") ? 5 : -5;
+    console.log(e.links[0].status, d.y, delta);
+    return d.y + delta;
+  })
   .add(pv.Dot)
+    // .data(function(p) {
+    //   return [{ 
+    //     x: p.sourceNode.x + 100, 
+    //     y: p.sourceNode.y + 100 
+    //   }];
+    // }) 
+    .left(function(p, q, r) {
+      var name = p.nodes[0].name;
+      console.log(p.index, name, p, q);
+      return p.x - 35;
+    })
     .size(6)
     .shape("triangle")
-    // .strokeStyle("black")
     .strokeStyle(function(d, e) {
       // console.log(d, e);
       return (e.links[0].status === "loss") ? "red" : "green";
     })
-    .fillStyle("white")
-    .visible(showArrow)
+    .fillStyle(function(d) { this.strokeStyle; })
+    .visible(showArrow);
+      // .text(function(d, p) p.linkValue); 
+
+// alink.add(pv.Label) 
+//   .data(function(p) {
+//     return [{ 
+//       x: (p.sourceNode.x + p.targetNode.x) / 2, 
+//       y: (p.sourceNode.y + p.targetNode.y) / 2 
+//     }];
+//   }) 
+//   // .textAlign("center") 
+//   // .textBaseline("middle") 
+//   .text(function(d, p) { return "foo"; }) 
+
+// layout.link
+
+
     // .left(function(node, link) {
     //   var s = link.sourceNode;
     //   var t = link.targetNode;
