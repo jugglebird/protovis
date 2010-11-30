@@ -54,6 +54,11 @@ layout.link.add(pv.Line);
 // for text
 layout.node.add(pv.Dot)
   .size(750)
+  // .anchor("right")
+  //   .add(pv.Dot)
+  //   .size(12)
+  //   .shape("triangle")
+  //   .fillStyle("blue")
   .anchor("center")
   .add(pv.Label)
     .text(function(node) {
@@ -68,8 +73,28 @@ layout.node.add(pv.Dot)
 //   .textBaseline("bottom");
 
 // Style the links
-var alink = layout.link;
-
+layout.link
+  .add(pv.Label) 
+    .data(function(p) {
+      return [{ 
+        nodes: [1],
+        x: (p.sourceNode.x + p.targetNode.x) / 2, 
+        y: (p.sourceNode.y + p.targetNode.y) / 2 
+      }];
+    }) 
+    .textStyle(function(d, e) {
+      // console.log(d, e);
+      return (e.links[0].status === "loss") ? "red" : "green";
+    })
+    .textAlign("center") 
+    .textBaseline(function(d, e) {
+      return (e.links[0].status === "loss") ? "top" : "bottom";
+    }) 
+    .text(function(d, e) {
+      console.log(this, d, e);
+      return e.links[0].count;
+    });
+// 
 layout.link
   .eccentricity(1)
   .strokeStyle(function(d, e) {
@@ -78,7 +103,6 @@ layout.link
   })
   .top(function(d,e) {
     var delta = (e.links[0].status === "loss") ? 5 : -5;
-    console.log(e.links[0].status, d.y, delta);
     return d.y + delta;
   })
   .add(pv.Dot)
@@ -89,30 +113,18 @@ layout.link
     //   }];
     // }) 
     .left(function(p, q, r) {
-      var name = p.nodes[0].name;
-      console.log(p.index, name, p, q);
+      // TODO: Compute this based on node size?
       return p.x - 35;
     })
-    .size(6)
+    .size(12)
     .shape("triangle")
     .strokeStyle(function(d, e) {
-      // console.log(d, e);
       return (e.links[0].status === "loss") ? "red" : "green";
     })
-    .fillStyle(function(d) { this.strokeStyle; })
-    .visible(showArrow);
-      // .text(function(d, p) p.linkValue); 
+    .fillStyle(function(d) { return this.strokeStyle(); })
+    .visible(showArrow)
 
-// alink.add(pv.Label) 
-//   .data(function(p) {
-//     return [{ 
-//       x: (p.sourceNode.x + p.targetNode.x) / 2, 
-//       y: (p.sourceNode.y + p.targetNode.y) / 2 
-//     }];
-//   }) 
-//   // .textAlign("center") 
-//   // .textBaseline("middle") 
-//   .text(function(d, p) { return "foo"; }) 
+// debugger;
 
 // layout.link
 
